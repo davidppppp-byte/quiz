@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌹玫瑰硬金剛 - 地獄友情大考驗</title>
+    <title>🌹玫瑰硬金剛 - 地獄友情大考驗 (真·最終版)</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -15,6 +15,12 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .glitch-text { position: relative; }
+        .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .glitch-text::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+        @keyframes glitch-anim { 0% { clip: rect(31px, 9999px, 94px, 0); } 20% { clip: rect(11px, 9999px, 14px, 0); } 40% { clip: rect(56px, 9999px, 86px, 0); } 60% { clip: rect(2px, 9999px, 64px, 0); } 80% { clip: rect(35px, 9999px, 5px, 0); } 100% { clip: rect(81px, 9999px, 22px, 0); } }
+        @keyframes glitch-anim2 { 0% { clip: rect(85px, 9999px, 7px, 0); } 20% { clip: rect(21px, 9999px, 86px, 0); } 40% { clip: rect(31px, 9999px, 19px, 0); } 60% { clip: rect(66px, 9999px, 2px, 0); } 80% { clip: rect(2px, 9999px, 34px, 0); } 100% { clip: rect(54px, 9999px, 78px, 0); } }
     </style>
 </head>
 <body>
@@ -23,7 +29,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- 內建圖示元件 (SVG) 解決外部引用錯誤 ---
+        // --- 內建圖示元件 (SVG) ---
         const Icon = ({ size = 24, className = "", children }) => (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 {children}
@@ -63,134 +69,137 @@
 
         // 題目資料庫
         const quizData = [
+            // --- Part 1: 2023 創始篇 ---
             {
                 id: 1,
                 question: "2023/06/01 群組剛成立時，是誰把大家加進來的？",
                 options: ["David", "顧夫人❤️", "游珠蘭", "李維剛"],
-                answer: 2 // 游珠蘭
+                answer: 2
             },
             {
                 id: 2,
                 question: "David 一開始把群組名稱擅自改成了什麼，讓游珠蘭很生氣？",
                 options: ["硬金剛後援會", "金正恩的園地", "玫瑰瞳鈴眼", "我們這一家"],
-                answer: 1 // 金正恩的園地
+                answer: 1
             },
             {
                 id: 3,
-                question: "顧夫人❤️原本想要將群組取名為什麼？",
-                options: ["硬金剛三人組", "玫瑰🌹花園", "小顧的後宮", "麻將三缺一"],
-                answer: 0 // 硬金剛三人組
+                question: "游珠蘭因為名字被亂改，威脅要對 David 做什麼事？",
+                options: ["報警", "把他踢出去", "絕交", "收回訊息"],
+                answer: 1
             },
             {
                 id: 4,
-                question: "游珠蘭因為名字被亂改，威脅要對 David 做什麼事？",
-                options: ["報警", "把他踢出去", "絕交", "收回訊息"],
-                answer: 1 // 把他踢出去
+                question: "誰在遊戲裡面「沒穿衣服」被 David 抓包？",
+                options: ["李維剛", "MM ♥ めぐみ", "Jyun", "家寧"],
+                answer: 1
             },
             {
                 id: 5,
-                question: "顧夫人❤️ 分享的邀請碼是多少？",
-                options: ["GM77O0", "2O235X", "Y4WBAF", "LOVE520"],
-                answer: 2 // Y4WBAF
+                question: "MM ♥ めぐみ 為什麼沒穿衣服？",
+                options: ["因為想裸奔", "不知道哪裡可以穿衣服", "裝備壞了", "被盜帳號"],
+                answer: 1
             },
             {
                 id: 6,
-                question: "李維剛分享的邀請碼 GM77O0，最後一個字元是什麼？",
-                options: ["數字 0", "英文字母 O", "英文字母 Q", "數字 9"],
-                answer: 0 
+                question: "誰說了「美股米狂拍耶 讚喔」？",
+                options: ["李維剛", "David", "顧夫人❤️", "政儀"],
+                answer: 1
             },
             {
                 id: 7,
-                question: "誰在遊戲裡面「沒穿衣服」被 David 抓包？",
-                options: ["李維剛", "MM ♥ めぐみ", "Jyun", "家寧"],
-                answer: 1 // MM ♥ めぐみ
-            },
-            {
-                id: 8,
-                question: "MM ♥ めぐみ 為什麼沒穿衣服？",
-                options: ["因為想裸奔", "不知道哪裡可以穿衣服", "裝備壞了", "被盜帳號"],
-                answer: 1 // 不知道哪裡可以穿衣服
-            },
-            {
-                id: 9,
-                question: "David 說遊戲裡的「屋子」幾等了？",
-                options: ["一等", "兩等", "三等", "還沒蓋"],
-                answer: 1 // 兩等
-            },
-            {
-                id: 10,
-                question: "誰說了「可以賭錢」這句話？",
-                options: ["David", "李維剛", "政儀", "Jyun"],
-                answer: 0 // David
-            },
-            {
-                id: 11,
-                question: "是誰貼了一個 (empty tear) 的表情？",
-                options: ["David", "Jyun", "MM ♥ めぐみ", "游珠蘭"],
-                answer: 1 // Jyun
-            },
-            {
-                id: 12,
-                question: "李維剛在 13:40 傳了一張照片後問了什麼？",
-                options: ["好看嗎？", "這什麼？", "有時效性？", "誰要吃？"],
-                answer: 2 // 有時效性？
-            },
-            {
-                id: 13,
-                question: "MM ♥ めぐみ 在 13:55 做了什麼舉動？",
-                options: ["退群", "收回訊息", "改群組名", "傳了自拍"],
-                answer: 1 // 已收回訊息
-            },
-            {
-                id: 14,
-                question: "誰說了「美股米狂拍耶 讚喔」？",
-                options: ["李維剛", "David", "顧夫人❤️", "政儀"],
-                answer: 1 // David
-            },
-            {
-                id: 15,
-                question: "游珠蘭一開始把幾個人加進了群組？",
-                options: ["3個", "5個", "6個", "8個"],
-                answer: 2 // David, 顧夫人, 家寧, 政儀, 李維剛, MM (共6人)
-            },
-            {
-                id: 16,
-                question: "這個群組的最終名稱（根據檔案標題）是什麼？",
-                options: ["金正恩的園地", "硬金剛三人組", "玫瑰🌹硬金剛後援會", "快樂夥伴"],
-                answer: 2 // 玫瑰🌹硬金剛後援會
-            },
-            {
-                id: 17,
-                question: "MM ♥ めぐみ 在被說沒穿衣服後，回了什麼？",
-                options: ["嘿嘿", "對啊", "討厭", "真的假的"],
-                answer: 1 // 對啊
-            },
-            {
-                id: 18,
-                question: "誰說「都小顧啦」？",
+                question: "誰最喜歡說「都小顧啦」？",
                 options: ["David", "游珠蘭", "李維剛", "MM ♥ めぐみ"],
-                answer: 1 // 游珠蘭
+                answer: 1
+            },
+
+            // --- Part 2: 2024.07.14 硬金剛事變篇 (地獄級) ---
+            {
+                id: 101,
+                question: "【714事變】2024/07/14 凌晨，David 為了讓隔天行程更有彈性，在群組說取消了什麼？",
+                options: ["取消午餐", "取消訂房", "取消KTV", "取消高鐵票"],
+                answer: 0
             },
             {
-                id: 19,
-                question: "David 提供的邀請碼是多少？",
-                options: ["2O235X", "Y4WBAF", "GM77O0", "TEST01"],
-                answer: 0 // 2O235X
+                id: 102,
+                question: "【714事變】吵架隔天，誰在群組發了一篇長文，分析「當局者迷，旁觀者清」來還原整件事？",
+                options: ["Jyun", "李維剛", "David", "顧夫人❤️"],
+                answer: 2
             },
             {
-                id: 20,
-                question: "【終極題】我們曾經是最好的朋友，對吧？",
-                options: ["是", "當然是", "永遠都是", "沒錯"],
-                answer: 2 
+                id: 103,
+                question: "【714事變】游珠蘭在爭執中坦承了什麼秘密，表示自己當時其實很低潮？",
+                options: ["和男友分手", "5月被公司辭退", "錢包不見", "生重病"],
+                answer: 1
+            },
+            {
+                id: 104,
+                question: "【714事變】家寧在情緒最激動時，說了哪句讓人心碎的話？",
+                options: ["「我們絕交吧」", "「拜託也不要解釋了，傷害已造成」", "「以後都不要約了」", "「隨便你們怎麼想」"],
+                answer: 1
+            },
+            {
+                id: 105,
+                question: "【714事變】MM ♥ めぐみ 解釋說，原本「嚇黃美」的計畫為什麼會告吹？",
+                options: ["黃美不想過生日", "因為 Ruru 被朋友發文標記", "David 說溜嘴", "氣球沒買到"],
+                answer: 1
+            },
+
+            // --- Part 3: 2024.10 泰滾歡樂篇 ---
+            {
+                id: 201,
+                question: "2024/10/11 Jyun 提議去吃哪間餐廳，因為壽星有優惠？",
+                options: ["屋馬", "泰滾 (Rolling Thai)", "刁民酸菜魚", "西堤"],
+                answer: 1
+            },
+            {
+                id: 202,
+                question: "為了湊滿「幾歲送幾隻蝦」的優惠，Jyun 當時自豪地說他可以送幾隻？",
+                options: ["39隻", "18隻", "40隻", "100隻"],
+                answer: 2
+            },
+            {
+                id: 203,
+                question: "關於那次聚餐的 Dress Code，顧夫人指定的主題是什麼？",
+                options: ["睡衣趴", "泰式風或渡假風", "正裝", "萬聖節變裝"],
+                answer: 1
+            },
+            {
+                id: 204,
+                question: "誰在群組自稱是「單點王」，說可以負責湊滿 2000 元低消？",
+                options: ["李維剛", "政儀", "David", "Jyun"],
+                answer: 2
+            },
+
+            // --- Part 4: 2025 未來篇 (根據檔案紀錄) ---
+            {
+                id: 301,
+                question: "2025/07/12 生日時，誰被游珠蘭封為「岡山舞王」？",
+                options: ["David", "李維剛", "政儀 (黃美)", "Jyun"],
+                answer: 2
+            },
+            {
+                id: 302,
+                question: "2025/11/29 大家在玩「真朋友遊戲」時，David 問「誰一直打我」，是誰承認的？",
+                options: ["Jyun", "顧夫人❤️", "MM ♥ めぐみ", "李維剛"],
+                answer: 0
+            },
+            
+            // --- 終極題 ---
+            {
+                id: 999,
+                question: "【終極題】無論發生過什麼爭吵或誤會，我們永遠都是？",
+                options: ["陌生人", "酒肉朋友", "玫瑰🌹硬金剛後援會", "點頭之交"],
+                answer: 2
             }
         ];
 
         // 稱號判定
         const getResult = (score) => {
-            if (score === 100) return { title: "硬金剛生死盟", msg: "太神了！我們的回憶你全部都記得！這份情誼比鑽石還硬！💎" };
-            if (score >= 80) return { title: "玫瑰鐵粉", msg: "雖然有些小細節忘了，但我們曾經的快樂時光，你都放在心裡！🌹" };
-            if (score >= 60) return { title: "普通朋友", msg: "及格邊緣！是不是太久沒聯絡，記憶有點模糊了呢？快點出來聚聚吧！🍻" };
-            if (score >= 40) return { title: "塑膠情誼", msg: "哎呀...看來需要罰三杯！以前的對話都忘光光了嗎？😢" };
+            if (score >= 90) return { title: "硬金剛生死盟", msg: "太神了！連那場慘烈的「714事變」細節你都記得！這份情誼比鑽石還硬！💎" };
+            if (score >= 75) return { title: "玫瑰鐵粉", msg: "雖然有些小細節忘了，但我們曾經的快樂與淚水，你都放在心裡！🌹" };
+            if (score >= 50) return { title: "和事佬", msg: "你大概是那個想要勸架但又插不上話的人吧？至少你還記得大家！🤝" };
+            if (score >= 30) return { title: "塑膠情誼", msg: "哎呀...是不是太久沒聯絡，連我們為什麼吵架都忘了？😢" };
             return { title: "最熟悉的陌生人", msg: "曾經我們無話不談，現在卻變成了考卷上的空白。沒關係，讓我們重新認識吧！👋" };
         };
 
@@ -205,7 +214,7 @@
                 if (selectedOption !== null) return; 
                 
                 setSelectedOption(optionIndex);
-                const correct = optionIndex === quizData[currentQ].answer || quizData[currentQ].id === 20; 
+                const correct = optionIndex === quizData[currentQ].answer || quizData[currentQ].id === 999; 
                 setIsCorrect(correct);
 
                 if (correct) setScore(s => s + 5);
@@ -229,33 +238,36 @@
                 setStep('start');
             };
 
+            // Calculate progress percentage
+            const progress = ((currentQ + 1) / quizData.length) * 100;
+
             return (
-                <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-                    <div className="w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden text-center relative">
+                <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-black font-sans">
+                    <div className="w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden text-center relative flex flex-col max-h-[90vh]">
                         
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-purple-600 to-blue-600"></div>
+                        <div className="absolute top-0 left-0 h-1 bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 transition-all duration-300" style={{width: `${progress}%`}}></div>
 
                         {step === 'start' && (
-                            <div className="p-8 fade-in flex flex-col items-center">
-                                <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                                    <Skull className="text-red-500 w-10 h-10" />
+                            <div className="p-8 fade-in flex flex-col items-center justify-center h-full">
+                                <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6 animate-pulse border-2 border-red-900/50 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+                                    <Skull className="text-red-500 w-12 h-12" />
                                 </div>
-                                <h1 className="text-3xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500">
+                                <h1 className="text-4xl font-black mb-2 text-white tracking-tighter glitch-text" data-text="地獄友情大考驗">
                                     地獄友情大考驗
                                 </h1>
-                                <p className="text-gray-400 mb-8 text-sm">
-                                    玫瑰🌹硬金剛後援會專屬<br/>
-                                    考驗我們是否還記得彼此的黑歷史...
+                                <p className="text-gray-400 mb-8 text-sm max-w-[260px] leading-relaxed">
+                                    玫瑰🌹硬金剛後援會<br/>
+                                    真·最終版 (含714事變)
                                 </p>
                                 
                                 <div className="space-y-4 w-full">
-                                    <div className="flex items-center justify-center space-x-2 text-yellow-500 text-sm bg-yellow-900/20 p-3 rounded-lg border border-yellow-800/50">
-                                        <AlertTriangle size={16} />
-                                        <span>警告：題目超級刁鑽</span>
+                                    <div className="flex items-center justify-center space-x-2 text-yellow-500 text-xs bg-yellow-900/10 p-3 rounded-lg border border-yellow-800/30">
+                                        <AlertTriangle size={14} />
+                                        <span>警告：題目包含2024年激烈爭吵</span>
                                     </div>
                                     <button 
                                         onClick={() => setStep('playing')}
-                                        className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                                        className="w-full py-4 bg-gradient-to-r from-red-700 to-purple-800 hover:from-red-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] shadow-lg flex items-center justify-center space-x-2 border border-white/10"
                                     >
                                         <Flame size={20} />
                                         <span>接受挑戰</span>
@@ -265,31 +277,33 @@
                         )}
 
                         {step === 'playing' && (
-                            <div className="p-6 fade-in text-left">
-                                <div className="flex justify-between items-center mb-6 text-sm text-gray-500">
-                                    <span>QUESTION {currentQ + 1} / {quizData.length}</span>
-                                    <span className="text-red-500 font-mono">Score: {score}</span>
+                            <div className="p-6 fade-in text-left flex flex-col h-full">
+                                <div className="flex justify-between items-center mb-6 text-xs font-mono tracking-wider text-gray-500 uppercase">
+                                    <span>Q {currentQ + 1} / {quizData.length}</span>
+                                    <span className="text-red-500">Score: {score}</span>
                                 </div>
 
-                                <div className="mb-6 min-h-[5rem]">
+                                <div className="mb-6 flex-grow flex items-center">
                                     <h2 className="text-xl font-bold leading-relaxed text-gray-100">
+                                        {quizData[currentQ].id > 100 && quizData[currentQ].id < 200 && <span className="text-red-500 text-sm block mb-1">🔥 714 事變題 🔥</span>}
+                                        {quizData[currentQ].id >= 200 && <span className="text-yellow-500 text-sm block mb-1">🍤 泰滾/未來篇 🍤</span>}
                                         {quizData[currentQ].question}
                                     </h2>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-3 pb-4">
                                     {quizData[currentQ].options.map((opt, idx) => {
-                                        let btnClass = "w-full p-4 rounded-xl border-2 text-left transition-all font-medium relative overflow-hidden ";
+                                        let btnClass = "w-full p-4 rounded-xl border-2 text-left transition-all font-medium relative overflow-hidden group ";
                                         
                                         if (selectedOption === null) {
-                                            btnClass += "border-gray-700 bg-gray-800 hover:bg-gray-700 hover:border-gray-500 text-gray-300";
+                                            btnClass += "border-gray-700 bg-gray-800/60 hover:bg-gray-700 hover:border-gray-500 text-gray-300";
                                         } else {
-                                            if (idx === quizData[currentQ].answer || (quizData[currentQ].id === 20)) {
+                                            if (idx === quizData[currentQ].answer || (quizData[currentQ].id === 999)) {
                                                 btnClass += "border-green-500 bg-green-900/30 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.3)]";
                                             } else if (idx === selectedOption) {
                                                 btnClass += "border-red-500 bg-red-900/30 text-red-400 animate-shake";
                                             } else {
-                                                btnClass += "border-gray-800 bg-gray-800/50 text-gray-600 opacity-50";
+                                                btnClass += "border-gray-800 bg-gray-800/30 text-gray-600 opacity-30 blur-[1px]";
                                             }
                                         }
 
@@ -301,8 +315,8 @@
                                                 className={btnClass}
                                             >
                                                 <div className="flex items-center justify-between z-10 relative">
-                                                    <span>{opt}</span>
-                                                    {selectedOption !== null && (idx === quizData[currentQ].answer || quizData[currentQ].id === 20) && (
+                                                    <span className="group-hover:translate-x-1 transition-transform">{opt}</span>
+                                                    {selectedOption !== null && (idx === quizData[currentQ].answer || quizData[currentQ].id === 999) && (
                                                         <Trophy size={18} className="text-green-500" />
                                                     )}
                                                 </div>
@@ -314,37 +328,34 @@
                         )}
 
                         {step === 'result' && (
-                            <div className="p-8 fade-in flex flex-col items-center">
-                                <div className="relative mb-6">
-                                    <div className="w-24 h-24 rounded-full border-4 border-gray-700 flex items-center justify-center bg-gray-800 text-4xl font-black text-white shadow-xl">
+                            <div className="p-8 fade-in flex flex-col items-center justify-center h-full">
+                                <div className="relative mb-6 group">
+                                    <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-full"></div>
+                                    <div className="w-28 h-28 rounded-full border-4 border-gray-700 flex items-center justify-center bg-gray-800 text-5xl font-black text-white shadow-2xl relative z-10">
                                         {score}
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-xs px-2 py-1 rounded-full font-bold">
-                                        分
+                                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-xs px-3 py-1 rounded-full font-bold z-20 border border-gray-900">
+                                        SCORE
                                     </div>
                                 </div>
 
-                                <div className="mb-8">
-                                    <h3 className="text-sm text-gray-500 uppercase tracking-widest mb-1">你的稱號</h3>
-                                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                                <div className="mb-8 w-full">
+                                    <h3 className="text-xs text-gray-500 uppercase tracking-[0.2em] mb-2">你的稱號</h3>
+                                    <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse">
                                         {getResult(score).title}
                                     </h2>
                                 </div>
 
-                                <div className="bg-gray-800/50 rounded-xl p-6 mb-8 border border-gray-700 relative">
+                                <div className="bg-gray-800/50 rounded-xl p-6 mb-8 border border-gray-700 relative w-full">
                                     <Heart className="absolute -top-3 -left-3 text-pink-500 fill-pink-500 w-8 h-8 animate-bounce" />
-                                    <p className="text-gray-300 leading-relaxed font-light">
+                                    <p className="text-gray-300 leading-relaxed font-light text-sm">
                                         "{getResult(score).msg}"
                                     </p>
                                 </div>
                                 
-                                <p className="text-xs text-gray-600 mb-6 italic">
-                                    無論發生過什麼，這些對話都是我們存在過的證明。
-                                </p>
-
                                 <button 
                                     onClick={restart}
-                                    className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center space-x-2"
+                                    className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center space-x-2 border border-gray-600"
                                 >
                                     <RefreshCw size={18} />
                                     <span>再挑戰一次</span>

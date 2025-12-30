@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹玫瑰硬金剛 - 地獄友情大考驗</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #0f0f0f; color: #e5e5e5; }
+        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- 內建圖示元件 (SVG) 解決外部引用錯誤 ---
+        const Icon = ({ size = 24, className = "", children }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Skull = (props) => (
+            <Icon {...props}>
+                <path d="m12.5 17-.5-1-.5 1h1z"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/>
+            </Icon>
+        );
+        const Flame = (props) => (
+            <Icon {...props}>
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.5-3.3.3-1.2 1-2 1.6-3.2"/>
+            </Icon>
+        );
+        const Trophy = (props) => (
+            <Icon {...props}>
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </Icon>
+        );
+        const AlertTriangle = (props) => (
+            <Icon {...props}>
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+            </Icon>
+        );
+        const Heart = (props) => (
+            <Icon {...props}>
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </Icon>
+        );
+        const RefreshCw = (props) => (
+            <Icon {...props}>
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>
+            </Icon>
+        );
+
+        // 題目資料庫
+        const quizData = [
+            {
+                id: 1,
+                question: "2023/06/01 群組剛成立時，是誰把大家加進來的？",
+                options: ["David", "顧夫人❤️", "游珠蘭", "李維剛"],
+                answer: 2 // 游珠蘭
+            },
+            {
+                id: 2,
+                question: "David 一開始把群組名稱擅自改成了什麼，讓游珠蘭很生氣？",
+                options: ["硬金剛後援會", "金正恩的園地", "玫瑰瞳鈴眼", "我們這一家"],
+                answer: 1 // 金正恩的園地
+            },
+            {
+                id: 3,
+                question: "顧夫人❤️原本想要將群組取名為什麼？",
+                options: ["硬金剛三人組", "玫瑰🌹花園", "小顧的後宮", "麻將三缺一"],
+                answer: 0 // 硬金剛三人組
+            },
+            {
+                id: 4,
+                question: "游珠蘭因為名字被亂改，威脅要對 David 做什麼事？",
+                options: ["報警", "把他踢出去", "絕交", "收回訊息"],
+                answer: 1 // 把他踢出去
+            },
+            {
+                id: 5,
+                question: "顧夫人❤️ 分享的邀請碼是多少？",
+                options: ["GM77O0", "2O235X", "Y4WBAF", "LOVE520"],
+                answer: 2 // Y4WBAF
+            },
+            {
+                id: 6,
+                question: "李維剛分享的邀請碼 GM77O0，最後一個字元是什麼？",
+                options: ["數字 0", "英文字母 O", "英文字母 Q", "數字 9"],
+                answer: 0 
+            },
+            {
+                id: 7,
+                question: "誰在遊戲裡面「沒穿衣服」被 David 抓包？",
+                options: ["李維剛", "MM ♥ めぐみ", "Jyun", "家寧"],
+                answer: 1 // MM ♥ めぐみ
+            },
+            {
+                id: 8,
+                question: "MM ♥ めぐみ 為什麼沒穿衣服？",
+                options: ["因為想裸奔", "不知道哪裡可以穿衣服", "裝備壞了", "被盜帳號"],
+                answer: 1 // 不知道哪裡可以穿衣服
+            },
+            {
+                id: 9,
+                question: "David 說遊戲裡的「屋子」幾等了？",
+                options: ["一等", "兩等", "三等", "還沒蓋"],
+                answer: 1 // 兩等
+            },
+            {
+                id: 10,
+                question: "誰說了「可以賭錢」這句話？",
+                options: ["David", "李維剛", "政儀", "Jyun"],
+                answer: 0 // David
+            },
+            {
+                id: 11,
+                question: "是誰貼了一個 (empty tear) 的表情？",
+                options: ["David", "Jyun", "MM ♥ めぐみ", "游珠蘭"],
+                answer: 1 // Jyun
+            },
+            {
+                id: 12,
+                question: "李維剛在 13:40 傳了一張照片後問了什麼？",
+                options: ["好看嗎？", "這什麼？", "有時效性？", "誰要吃？"],
+                answer: 2 // 有時效性？
+            },
+            {
+                id: 13,
+                question: "MM ♥ めぐみ 在 13:55 做了什麼舉動？",
+                options: ["退群", "收回訊息", "改群組名", "傳了自拍"],
+                answer: 1 // 已收回訊息
+            },
+            {
+                id: 14,
+                question: "誰說了「美股米狂拍耶 讚喔」？",
+                options: ["李維剛", "David", "顧夫人❤️", "政儀"],
+                answer: 1 // David
+            },
+            {
+                id: 15,
+                question: "游珠蘭一開始把幾個人加進了群組？",
+                options: ["3個", "5個", "6個", "8個"],
+                answer: 2 // David, 顧夫人, 家寧, 政儀, 李維剛, MM (共6人)
+            },
+            {
+                id: 16,
+                question: "這個群組的最終名稱（根據檔案標題）是什麼？",
+                options: ["金正恩的園地", "硬金剛三人組", "玫瑰🌹硬金剛後援會", "快樂夥伴"],
+                answer: 2 // 玫瑰🌹硬金剛後援會
+            },
+            {
+                id: 17,
+                question: "MM ♥ めぐみ 在被說沒穿衣服後，回了什麼？",
+                options: ["嘿嘿", "對啊", "討厭", "真的假的"],
+                answer: 1 // 對啊
+            },
+            {
+                id: 18,
+                question: "誰說「都小顧啦」？",
+                options: ["David", "游珠蘭", "李維剛", "MM ♥ めぐみ"],
+                answer: 1 // 游珠蘭
+            },
+            {
+                id: 19,
+                question: "David 提供的邀請碼是多少？",
+                options: ["2O235X", "Y4WBAF", "GM77O0", "TEST01"],
+                answer: 0 // 2O235X
+            },
+            {
+                id: 20,
+                question: "【終極題】我們曾經是最好的朋友，對吧？",
+                options: ["是", "當然是", "永遠都是", "沒錯"],
+                answer: 2 
+            }
+        ];
+
+        // 稱號判定
+        const getResult = (score) => {
+            if (score === 100) return { title: "硬金剛生死盟", msg: "太神了！我們的回憶你全部都記得！這份情誼比鑽石還硬！💎" };
+            if (score >= 80) return { title: "玫瑰鐵粉", msg: "雖然有些小細節忘了，但我們曾經的快樂時光，你都放在心裡！🌹" };
+            if (score >= 60) return { title: "普通朋友", msg: "及格邊緣！是不是太久沒聯絡，記憶有點模糊了呢？快點出來聚聚吧！🍻" };
+            if (score >= 40) return { title: "塑膠情誼", msg: "哎呀...看來需要罰三杯！以前的對話都忘光光了嗎？😢" };
+            return { title: "最熟悉的陌生人", msg: "曾經我們無話不談，現在卻變成了考卷上的空白。沒關係，讓我們重新認識吧！👋" };
+        };
+
+        const App = () => {
+            const [step, setStep] = useState('start'); // start, playing, result
+            const [currentQ, setCurrentQ] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selectedOption, setSelectedOption] = useState(null);
+            const [isCorrect, setIsCorrect] = useState(null);
+
+            const handleAnswer = (optionIndex) => {
+                if (selectedOption !== null) return; 
+                
+                setSelectedOption(optionIndex);
+                const correct = optionIndex === quizData[currentQ].answer || quizData[currentQ].id === 20; 
+                setIsCorrect(correct);
+
+                if (correct) setScore(s => s + 5);
+
+                setTimeout(() => {
+                    if (currentQ < quizData.length - 1) {
+                        setCurrentQ(c => c + 1);
+                        setSelectedOption(null);
+                        setIsCorrect(null);
+                    } else {
+                        setStep('result');
+                    }
+                }, 1200);
+            };
+
+            const restart = () => {
+                setScore(0);
+                setCurrentQ(0);
+                setSelectedOption(null);
+                setIsCorrect(null);
+                setStep('start');
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+                    <div className="w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden text-center relative">
+                        
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-purple-600 to-blue-600"></div>
+
+                        {step === 'start' && (
+                            <div className="p-8 fade-in flex flex-col items-center">
+                                <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                                    <Skull className="text-red-500 w-10 h-10" />
+                                </div>
+                                <h1 className="text-3xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500">
+                                    地獄友情大考驗
+                                </h1>
+                                <p className="text-gray-400 mb-8 text-sm">
+                                    玫瑰🌹硬金剛後援會專屬<br/>
+                                    考驗我們是否還記得彼此的黑歷史...
+                                </p>
+                                
+                                <div className="space-y-4 w-full">
+                                    <div className="flex items-center justify-center space-x-2 text-yellow-500 text-sm bg-yellow-900/20 p-3 rounded-lg border border-yellow-800/50">
+                                        <AlertTriangle size={16} />
+                                        <span>警告：題目超級刁鑽</span>
+                                    </div>
+                                    <button 
+                                        onClick={() => setStep('playing')}
+                                        className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                                    >
+                                        <Flame size={20} />
+                                        <span>接受挑戰</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 'playing' && (
+                            <div className="p-6 fade-in text-left">
+                                <div className="flex justify-between items-center mb-6 text-sm text-gray-500">
+                                    <span>QUESTION {currentQ + 1} / {quizData.length}</span>
+                                    <span className="text-red-500 font-mono">Score: {score}</span>
+                                </div>
+
+                                <div className="mb-6 min-h-[5rem]">
+                                    <h2 className="text-xl font-bold leading-relaxed text-gray-100">
+                                        {quizData[currentQ].question}
+                                    </h2>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {quizData[currentQ].options.map((opt, idx) => {
+                                        let btnClass = "w-full p-4 rounded-xl border-2 text-left transition-all font-medium relative overflow-hidden ";
+                                        
+                                        if (selectedOption === null) {
+                                            btnClass += "border-gray-700 bg-gray-800 hover:bg-gray-700 hover:border-gray-500 text-gray-300";
+                                        } else {
+                                            if (idx === quizData[currentQ].answer || (quizData[currentQ].id === 20)) {
+                                                btnClass += "border-green-500 bg-green-900/30 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.3)]";
+                                            } else if (idx === selectedOption) {
+                                                btnClass += "border-red-500 bg-red-900/30 text-red-400 animate-shake";
+                                            } else {
+                                                btnClass += "border-gray-800 bg-gray-800/50 text-gray-600 opacity-50";
+                                            }
+                                        }
+
+                                        return (
+                                            <button 
+                                                key={idx}
+                                                onClick={() => handleAnswer(idx)}
+                                                disabled={selectedOption !== null}
+                                                className={btnClass}
+                                            >
+                                                <div className="flex items-center justify-between z-10 relative">
+                                                    <span>{opt}</span>
+                                                    {selectedOption !== null && (idx === quizData[currentQ].answer || quizData[currentQ].id === 20) && (
+                                                        <Trophy size={18} className="text-green-500" />
+                                                    )}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 'result' && (
+                            <div className="p-8 fade-in flex flex-col items-center">
+                                <div className="relative mb-6">
+                                    <div className="w-24 h-24 rounded-full border-4 border-gray-700 flex items-center justify-center bg-gray-800 text-4xl font-black text-white shadow-xl">
+                                        {score}
+                                    </div>
+                                    <div className="absolute -bottom-2 -right-2 bg-red-600 text-xs px-2 py-1 rounded-full font-bold">
+                                        分
+                                    </div>
+                                </div>
+
+                                <div className="mb-8">
+                                    <h3 className="text-sm text-gray-500 uppercase tracking-widest mb-1">你的稱號</h3>
+                                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                                        {getResult(score).title}
+                                    </h2>
+                                </div>
+
+                                <div className="bg-gray-800/50 rounded-xl p-6 mb-8 border border-gray-700 relative">
+                                    <Heart className="absolute -top-3 -left-3 text-pink-500 fill-pink-500 w-8 h-8 animate-bounce" />
+                                    <p className="text-gray-300 leading-relaxed font-light">
+                                        "{getResult(score).msg}"
+                                    </p>
+                                </div>
+                                
+                                <p className="text-xs text-gray-600 mb-6 italic">
+                                    無論發生過什麼，這些對話都是我們存在過的證明。
+                                </p>
+
+                                <button 
+                                    onClick={restart}
+                                    className="w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center space-x-2"
+                                >
+                                    <RefreshCw size={18} />
+                                    <span>再挑戰一次</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
